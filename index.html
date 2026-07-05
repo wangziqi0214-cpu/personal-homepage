@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>王梓琦 — 擅长领域与技能名单</title>
+<style>
+  :root{
+    --bg:#f2f1ee;
+    --card:#ffffff;
+    --line:rgba(0,0,0,0.08);
+    --text:#1d1d1f;
+    --muted:#6e6e73;
+    --accent:#1d1d1f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+    line-height:1.75;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--text); color:#fff; }
+
+  /* minimal background with diagonal stripe texture */
+  .bg-glow{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px circle at 50% 0%, rgba(0,0,0,0.03), transparent 60%),
+      repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 14px);
+  }
+
+  .noise{ display:none; }
+
+  /* side nav dots */
+  .dotnav{
+    position:fixed; right:28px; top:50%; transform:translateY(-50%);
+    z-index:50; display:flex; flex-direction:column; gap:16px;
+  }
+  .dotnav a{
+    width:9px; height:9px; border-radius:50%;
+    background:rgba(0,0,0,0.15);
+    display:block; position:relative;
+    transition: background .3s;
+  }
+  .dotnav a::after{
+    content:attr(data-label);
+    position:absolute; right:20px; top:50%; transform:translateY(-50%);
+    font-size:12px; color:var(--muted); white-space:nowrap;
+    opacity:0; transition:opacity .25s; pointer-events:none;
+  }
+  .dotnav a:hover::after{ opacity:1; }
+  .dotnav a.active{ background:var(--text); box-shadow:0 0 0 4px rgba(0,0,0,0.1); }
+
+  section{
+    position:relative; z-index:2;
+    max-width:1080px; margin:0 auto;
+    padding:140px 32px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex; align-items:center; gap:64px;
+    padding-top:80px; padding-bottom:80px;
+  }
+  .hero-text{
+    flex:1.3;
+    padding-right:64px; border-right:1px solid var(--line);
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:13px; color:var(--muted); letter-spacing:2px; text-transform:uppercase;
+    margin-bottom:22px; opacity:0; animation:fadeUp .8s .1s forwards;
+  }
+  .eyebrow .dot{ width:26px; height:1px; background:var(--text); }
+  h1.name{
+    font-size:clamp(40px,6vw,64px); font-weight:800; letter-spacing:1px;
+    position:relative; overflow:hidden; cursor:pointer;
+    height:clamp(56px,7.5vw,84px);
+    display:flex; align-items:center;
+    margin-bottom:28px;
+    opacity:0; animation:fadeUp .8s .2s forwards;
+  }
+  h1.name .main-text{
+    display:block; color:var(--text);
+    transition:transform .5s cubic-bezier(.7,0,.3,1), opacity .4s;
+  }
+  h1.name::before{
+    content:attr(data-replace);
+    position:absolute; left:0; top:0; height:100%; width:100%;
+    display:flex; align-items:center;
+    font-size:20px; font-weight:700; letter-spacing:0; color:var(--muted);
+    transform:translateY(100%);
+    transition:transform .5s cubic-bezier(.7,0,.3,1);
+    white-space:nowrap;
+  }
+  h1.name:hover .main-text{ transform:translateY(-100%); opacity:0; }
+  h1.name:hover::before{ transform:translateY(0); }
+  .pitch{
+    font-size:16px; color:var(--muted); max-width:560px; margin-bottom:36px;
+    opacity:0; animation:fadeUp .8s .4s forwards;
+  }
+  .hero-tags{
+    display:flex; flex-wrap:wrap; gap:10px;
+    opacity:0; animation:fadeUp .8s .5s forwards;
+  }
+  .hero-tags span{
+    font-size:12.5px; padding:7px 14px; border-radius:20px;
+    border:1px solid var(--line); color:var(--muted);
+    background:var(--card);
+  }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(18px);} to{ opacity:1; transform:translateY(0);} }
+
+  .hero-photo{
+    flex:1; display:flex; justify-content:center;
+    opacity:0; animation:fadeIn 1s .3s forwards;
+  }
+  @keyframes fadeIn{ from{opacity:0; transform:scale(.94);} to{opacity:1; transform:scale(1);} }
+  .photo-frame{
+    width:280px; height:280px; border-radius:28px;
+    padding:1px;
+    background:var(--text);
+    position:relative;
+  }
+  .photo-frame img{
+    width:100%; height:100%; border-radius:27px; object-fit:cover;
+    display:block; background:#eee;
+  }
+  .photo-frame .inner-mask{
+    position:absolute; inset:1px; border-radius:27px; overflow:hidden;
+  }
+
+  .scroll-cue{
+    position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+    font-size:12px; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .scroll-cue .line{ width:1px; height:36px; background:linear-gradient(var(--muted), transparent); animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:.3;} 50%{opacity:1;} }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{ opacity:0; transform:translateY(36px); transition:opacity .8s ease, transform .8s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .reveal-delay1.in{ transition-delay:.1s; }
+  .reveal-delay2.in{ transition-delay:.2s; }
+  .reveal-delay3.in{ transition-delay:.3s; }
+
+  /* ---------- section header ---------- */
+  .sec-head{ margin-bottom:56px; }
+  .sec-num{ display:flex; align-items:center; gap:12px; font-size:13px; color:var(--text); letter-spacing:2px; font-weight:600; margin-bottom:14px; }
+  .sec-num::before{ content:''; width:32px; height:1px; background:var(--text); display:inline-block; }
+  .sec-title{ font-size:clamp(28px,4vw,38px); font-weight:800; }
+  .sec-sub{ color:var(--muted); margin-top:12px; max-width:640px; font-size:15px; }
+
+  /* ---------- capability blocks ---------- */
+  .cap-block{
+    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
+    padding:64px 0; border-bottom:1px solid var(--line);
+  }
+  .cap-block:last-child{ border-bottom:none; }
+  .cap-block.reverse{ direction:rtl; }
+  .cap-block.reverse > *{ direction:ltr; }
+  .cap-copy h3{ font-size:24px; font-weight:700; margin-bottom:16px; }
+  .cap-copy h3 .idx{ color:var(--muted); margin-right:10px; font-weight:800; }
+  .cap-copy p{ color:var(--muted); font-size:14.5px; margin-bottom:14px; }
+  .cap-copy ul{ margin:18px 0 0; padding-left:0; list-style:none; }
+  .cap-copy li{
+    font-size:13.5px; color:var(--text); padding:10px 0 10px 22px; position:relative;
+    border-top:1px solid var(--line);
+  }
+  .cap-copy li:first-child{ border-top:none; }
+  .cap-copy li::before{
+    content:"—"; position:absolute; left:0; top:10px; color:var(--text);
+  }
+
+  .cap-visual{
+    position:relative; border-radius:16px; overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,0.08);
+    border:1px solid var(--line);
+    transform:perspective(1000px) rotateY(-4deg) rotateX(1deg);
+    transition:transform .5s ease, box-shadow .5s ease;
+  }
+  .cap-block.reverse .cap-visual{ transform:perspective(1000px) rotateY(4deg) rotateX(1deg); }
+  .cap-visual:hover{ transform:perspective(1000px) rotateY(0) rotateX(0) scale(1.02); box-shadow:0 30px 60px rgba(0,0,0,0.12); }
+  .cap-visual img{ width:100%; display:block; }
+  .cap-visual .cap-tag{
+    position:absolute; top:14px; left:14px;
+    background:rgba(29,29,31,0.85); backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.1); font-size:11px; color:#fff;
+    padding:5px 12px; border-radius:20px;
+  }
+
+  .mini-gallery{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .mini-gallery img{ width:100%; border-radius:10px; display:block; border:1px solid var(--line); }
+  .mini-gallery .full{ grid-column:1 / -1; }
+
+  /* ---------- future direction cards ---------- */
+  .future-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .future-card{
+    background:var(--card);
+    border:1px solid var(--line); border-radius:16px; padding:28px 24px;
+    box-shadow:0 12px 32px rgba(0,0,0,0.05);
+    transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+    position:relative; overflow:hidden;
+  }
+  .future-card::before{
+    content:''; position:absolute; inset:0; opacity:0;
+    background:radial-gradient(300px circle at var(--mx,50%) var(--my,0%), rgba(0,0,0,0.05), transparent 60%);
+    transition:opacity .3s;
+  }
+  .future-card:hover::before{ opacity:1; }
+  .future-card:hover{ transform:translateY(-6px); box-shadow:0 20px 44px rgba(0,0,0,0.09); border-color:rgba(0,0,0,0.16); }
+  .future-card .fc-num{ font-size:34px; font-weight:800; color:rgba(0,0,0,0.1); margin-bottom:8px; }
+  .future-card h4{ font-size:17px; margin-bottom:10px; font-weight:700; }
+  .future-card p{ font-size:13.5px; color:var(--muted); }
+
+  /* ---------- background timeline ---------- */
+  .story{
+    background:var(--card); border:1px solid var(--line); border-radius:20px; padding:40px;
+    box-shadow:0 12px 32px rgba(0,0,0,0.05);
+  }
+  .story p{ color:var(--muted); font-size:14.5px; margin-bottom:14px; }
+  .story p:last-child{ margin-bottom:0; }
+  .story b{ color:var(--text); }
+  .story .highlight{
+    display:inline-block; background:rgba(0,0,0,0.06); color:var(--text);
+    padding:2px 8px; border-radius:6px; font-weight:600;
+  }
+
+  /* ---------- footer ---------- */
+  footer{
+    text-align:center; padding:80px 32px 100px; color:var(--muted); font-size:13px;
+    position:relative; z-index:2;
+  }
+  footer .foot-title{ font-size:26px; color:var(--text); font-weight:800; margin-bottom:16px; }
+  footer .foot-sub{ margin-bottom:30px; }
+
+  @media (max-width: 860px){
+    .hero{ flex-direction:column-reverse; text-align:center; padding-top:120px; }
+    .hero-text{ padding-right:0; border-right:none; }
+    .hero-tags{ justify-content:center; }
+    .cap-block, .cap-block.reverse{ grid-template-columns:1fr; direction:ltr; }
+    .future-grid{ grid-template-columns:1fr; }
+    .dotnav{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="noise"></div>
+
+<nav class="dotnav" id="dotnav">
+  <a href="#hero" data-label="首页" class="active"></a>
+  <a href="#cap1" data-label="能力一"></a>
+  <a href="#cap2" data-label="能力二"></a>
+  <a href="#future" data-label="未来方向"></a>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="hero-text">
+    <div class="eyebrow"><span class="dot"></span>Live 音视频方向</div>
+    <h1 class="name" data-replace="会做工具、也懂内容场景"><span class="main-text">王梓琦</span></h1>
+    <p class="pitch">
+      两年内容运营经验，加上业余时间自己动手用 AI 做工具的习惯，让我既能理解「一个场景该怎么设计」，也能使用 AI 将重复劳动变简单。
+      这份名单整理了我目前会的三件事，以及接下来最想深入做的三个方向。
+    </p>
+    <div class="hero-tags">
+      <span>动手做工具</span>
+      <span>内容运营与标签体系</span>
+      <span>对话场景设计</span>
+      <span>数据质检全流程</span>
+    </div>
+  </div>
+  <div class="hero-photo">
+    <div class="photo-frame">
+      <div class="inner-mask"><img src="1780027580585_副本.png" alt="王梓琦"></div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>向下滚动</span><span class="line"></span></div>
+</section>
+
+<section id="cap1">
+  <div class="sec-head reveal">
+    <div class="sec-num">CAPABILITY 01</div>
+    <div class="sec-title">动手做工具，提升协作效率</div>
+    <div class="sec-sub">擅长发现工作流程中的效率痛点，并主动开发工具来解决。</div>
+  </div>
+
+  <div class="cap-block reveal">
+    <div class="cap-copy">
+      <h3><span class="idx">01</span>多语种录音转文字工具</h3>
+      <p>日常工作中经常需要核对不同语种的录音内容，逐句听译效率很低。为此我独立开发了一款带图形界面的转录工具，支持泰语、日语、韩语、维吾尔语、西班牙语等小语种。</p>
+      <ul>
+        <li>单条录音约半分钟即可完成转录，准确率八九成，人工只需微调即可使用</li>
+        <li>相比「播放音频 + 逐句核对」的旧流程效率提升明显</li>
+        <li>全程本地离线运行，无需联网即可完成转录</li>
+      </ul>
+    </div>
+    <div class="cap-visual">
+      <span class="cap-tag">自研工具</span>
+      <img src="assets/shot-asr-tool.png" alt="录音转文字工具">
+    </div>
+  </div>
+
+  <div class="cap-block reverse reveal">
+    <div class="cap-copy">
+      <h3><span class="idx">02</span>标注平台辅助插件</h3>
+      <p>针对标注平台使用中反复翻找内容、肉眼比对困难等问题，开发了一款浏览器插件来提升操作效率。</p>
+      <ul>
+        <li>侧边导航可直接点击跳转到对应内容，无需来回滚动查找</li>
+        <li>自动标出修改前后的差异，一眼看出改动位置</li>
+        <li>图片支持浮层查看，可拖动、旋转、缩放</li>
+      </ul>
+    </div>
+    <div class="cap-visual">
+      <span class="cap-tag">自研插件</span>
+      <img src="assets/shot-labelnav.png" alt="标注平台插件">
+    </div>
+  </div>
+
+  <div class="cap-block reveal">
+    <div class="cap-copy">
+      <h3><span class="idx">03</span>业余时间的独立开发</h3>
+      <p>工作之外也一直保持独立开发的习惯，做过播客类电视端 App、自媒体视频自动化产出工具等项目，从产品设计到开发实现都独立完成。</p>
+      <ul>
+        <li>播客电视端 App：首页、分类浏览、播放页、订阅列表等信息架构均为独立设计</li>
+        <li>后台支持可视化调整首页内容排布，改动后即时生效</li>
+      </ul>
+    </div>
+    <div class="cap-visual">
+      <span class="cap-tag">独立项目</span>
+      <div class="mini-gallery" style="padding:8px; background:#000;">
+        <img class="full" src="assets/tv-home.png" alt="TV 首页">
+        <img src="assets/tv-player.png" alt="TV 单集详情">
+        <img src="assets/tv-podcast-info.png" alt="TV 播客详情">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cap2">
+  <div class="sec-head reveal">
+    <div class="sec-num">CAPABILITY 02</div>
+    <div class="sec-title">懂内容场景，会设计对话</div>
+    <div class="sec-sub">两年内容运营经验，擅长将内容场景拆解为清晰的分类与标准。</div>
+  </div>
+  <div class="story reveal reveal-delay1">
+    <p>曾在网易云音乐负责内容运营两年，长期负责 <b>二次元、游戏音乐、日系、摇滚、粤语</b> 等垂类内容，参与过标签体系的搭建。此后从事多模态质检工作，也积累了对语音场景的实际判断经验，例如说话人的情绪、语气、环境声音与上下文是否连贯等。</p>
+    <p>结合这些积累，接下来希望重点投入的数据构造方向包括：</p>
+    <p>· <b>二次元与游戏相关的对话数据</b>——此类场景用户提问密度高、专有名词和梗较多、追问频繁，适合用于检验模型对垂类内容的理解深度与多轮对话的稳定性；</p>
+    <p>· <b>兴趣陪伴类场景</b>——结合以往「理解用户兴趣、组织内容供给」的经验，构造「用户表达兴趣、模型能够承接并延展话题」类的对话数据；</p>
+    <p>· <b>模型声音上的情绪表达</b>——关注模型在语音输出中能否恰当传递情绪与语气，比如安慰、调侃、惊喜等不同场景下声音的表现是否自然、是否贴合语境，这也是 Live 场景下影响用户体验的关键一环；</p>
+    <p>擅长将这类内容构造工作沉淀为 <span class="highlight">可复用的场景库与执行标准</span>，而不只是单次产出。</p>
+  </div>
+</section>
+
+<section id="future">
+  <div class="sec-head reveal">
+    <div class="sec-num">WHAT'S NEXT</div>
+    <div class="sec-title">未来希望重点参与的方向</div>
+    <div class="sec-sub">涵盖对话场景设计、AI 产出问题归因、语音难点处理三个方向。</div>
+  </div>
+  <div class="future-grid">
+    <div class="future-card reveal reveal-delay1">
+      <div class="fc-num">01</div>
+      <h4>对话场景体系建设</h4>
+      <p>重点是二次元、游戏、兴趣陪伴等常见对话场景的内容设计，以及把这些经验整理成可以反复用的模板和标准，而不是每次都从零开始写。</p>
+    </div>
+    <div class="future-card reveal reveal-delay2">
+      <div class="fc-num">02</div>
+      <h4>AI 产出问题的界定与归因</h4>
+      <p>专门看「AI 做得不好的地方」到底属于什么类型的问题，以及怎么把这些反馈整理成算法侧能直接用上的信息。</p>
+    </div>
+    <div class="future-card reveal reveal-delay3">
+      <div class="fc-num">03</div>
+      <h4>语音难点场景的处理与评测</h4>
+      <p>方言、口音、多语种、嘈杂环境这些常见的语音理解难点，正好是我做转录工具时积累下来的经验可以直接用上的地方。</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el=>io.observe(el));
+
+  // dot nav active state
+  const sections = ['hero','cap1','cap2','future'].map(id=>document.getElementById(id));
+  const dots = document.querySelectorAll('.dotnav a');
+  const dotIO = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const idx = sections.indexOf(entry.target);
+        dots.forEach(d=>d.classList.remove('active'));
+        if(dots[idx]) dots[idx].classList.add('active');
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(s=> s && dotIO.observe(s));
+
+  dots.forEach(d=>{
+    d.addEventListener('click', (e)=>{
+      e.preventDefault();
+      document.querySelector(d.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+    });
+  });
+
+  // tilt glow follow for future cards
+  document.querySelectorAll('.future-card').forEach(card=>{
+    card.addEventListener('mousemove', (e)=>{
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX-r.left)+'px');
+      card.style.setProperty('--my', (e.clientY-r.top)+'px');
+    });
+  });
+</script>
+</body>
+</html>

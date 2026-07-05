@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ASR 本地引擎转录工具箱</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #2b2b2b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  .window {
+    width: 1180px;
+    height: 760px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #444;
+  }
+  .titlebar {
+    height: 38px;
+    background: linear-gradient(180deg, #3c3f41, #2d2f30);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    color: #ddd;
+    font-size: 13px;
+    justify-content: space-between;
+  }
+  .titlebar .name { display:flex; align-items:center; gap:8px; }
+  .titlebar .dot { width:10px; height:10px; border-radius:50%; }
+  .traffic { display:flex; gap:8px; }
+  .traffic span { width:12px; height:12px; border-radius:50%; display:inline-block; }
+  .t1 { background:#ff5f57; } .t2 { background:#febc2e; } .t3 { background:#28c840; }
+
+  .body { flex:1; display:flex; }
+  .sidebar {
+    width: 300px;
+    background: #e8e8e8;
+    border-right: 1px solid #cfcfcf;
+    padding: 18px 16px;
+    overflow-y: auto;
+  }
+  .sidebar h3 {
+    font-size: 13px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 18px 0 8px;
+  }
+  .sidebar h3:first-child { margin-top: 0; }
+  .engine {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    font-size: 13.5px;
+    color: #222;
+    cursor: default;
+  }
+  .engine.active {
+    background: #3574d4;
+    color: #fff;
+  }
+  .engine .radio {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid #999;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .engine.active .radio { border-color: #fff; }
+  .engine.active .radio::after {
+    content: '';
+    position: absolute; top:2px; left:2px;
+    width:6px; height:6px; border-radius:50%;
+    background:#fff;
+  }
+  .engine .tag {
+    margin-left: auto;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.08);
+    color: #666;
+  }
+  .engine.active .tag { background: rgba(255,255,255,0.25); color:#fff; }
+
+  .lang-select {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #333;
+    display:flex;
+    justify-content: space-between;
+  }
+
+  .main {
+    flex: 1;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    background: #fafafa;
+  }
+  .dropzone {
+    border: 2px dashed #b9c8e0;
+    background: #eef3fb;
+    border-radius: 10px;
+    padding: 26px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .dropzone .icon {
+    width: 46px; height: 46px;
+    background: #3574d4;
+    border-radius: 10px;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size: 22px;
+  }
+  .dropzone .text b { display:block; font-size: 14.5px; color:#222; }
+  .dropzone .text span { font-size: 12.5px; color:#7a8ba8; }
+  .dropzone .filename {
+    margin-left:auto;
+    background:#fff;
+    border:1px solid #d5deea;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    color:#3a3a3a;
+  }
+
+  .progress-row {
+    display:flex; align-items:center; gap: 12px;
+  }
+  .progress-bar {
+    flex:1; height: 8px; background: #dfe6f0; border-radius: 4px; overflow:hidden;
+  }
+  .progress-bar > div {
+    width: 100%; height:100%;
+    background: linear-gradient(90deg,#3574d4,#5b9bf0);
+  }
+  .progress-row .pct { font-size: 12.5px; color:#3574d4; font-weight:600; width: 70px; }
+
+  .result-panel {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .result-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    gap: 10px;
+  }
+  .result-header .badge {
+    background: #eaf1fd; color: #3574d4;
+    font-size: 11.5px; padding: 3px 9px; border-radius: 12px; font-weight:600;
+  }
+  .result-header .meta { font-size:12px; color:#888; margin-left:auto; display:flex; gap:14px; }
+  .tabs { display:flex; gap:6px; }
+  .tab {
+    font-size: 12px; padding: 4px 10px; border-radius: 6px; color:#888; background:#f3f3f3;
+  }
+  .tab.active { background:#3574d4; color:#fff; }
+
+  .result-body {
+    padding: 18px 20px;
+    font-size: 13.5px;
+    line-height: 2;
+    color: #333;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .result-body .line { margin-bottom: 6px; }
+  .result-body .ts { color:#b0b0b0; font-size:11.5px; margin-right:8px; font-family: monospace; }
+
+  .compare-row {
+    display:flex; gap: 14px; margin-top: 4px;
+  }
+  .compare-col {
+    flex:1;
+    background:#fbfbfb;
+    border:1px solid #ececec;
+    border-radius:8px;
+    padding: 10px 12px;
+  }
+  .compare-col h4 { margin:0 0 8px; font-size:11.5px; color:#999; font-weight:600; }
+  .compare-col p { margin:0; font-size:12.5px; color:#444; line-height:1.8; }
+
+  .footer-status {
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:11.5px; color:#999; padding-top: 4px;
+  }
+  .footer-status .dot-live {
+    width:8px;height:8px;border-radius:50%; background:#33c060; display:inline-block; margin-right:6px;
+  }
+</style>
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      <div class="name"><span class="dot" style="background:#3574d4"></span>ASR 本地引擎转录工具箱 v2.3 — 多语种 · 多方言 · 离线</div>
+      <div class="traffic"><span class="t1"></span><span class="t2"></span><span class="t3"></span></div>
+    </div>
+    <div class="body">
+      <div class="sidebar">
+        <h3>识别引擎</h3>
+        <div class="engine"><div class="radio"></div>Whisper (faster-whisper)<span class="tag">99语种</span></div>
+        <div class="engine active"><div class="radio"></div>Qwen3-ASR<span class="tag">52语种+22方言</span></div>
+        <div class="engine"><div class="radio"></div>FunASR 方言引擎<span class="tag">7方言系</span></div>
+        <div class="engine"><div class="radio"></div>UniASR 闽南语<span class="tag">2-pass</span></div>
+        <div class="engine"><div class="radio"></div>Whisper 维吾尔语<span class="tag">微调</span></div>
+        <div class="engine"><div class="radio"></div>MMS 藏语引擎<span class="tag">3方言</span></div>
+        <div class="engine"><div class="radio"></div>多模型对比模式<span class="tag">并行</span></div>
+
+        <h3>语种 / 方言</h3>
+        <div class="lang-select"><span>泰语 (Thai)</span><span>▾</span></div>
+
+        <h3>输出格式</h3>
+        <div class="lang-select"><span>TXT · JSON · SRT</span><span>▾</span></div>
+
+        <h3>设备</h3>
+        <div class="lang-select"><span>自动 (GPU float16)</span><span>▾</span></div>
+      </div>
+      <div class="main">
+        <div class="dropzone">
+          <div class="icon">🎙</div>
+          <div class="text">
+            <b>拖拽音频/视频文件到此处，或点击选择</b>
+            <span>支持 mp3 / wav / flac / m4a / ogg / webm / mp4，单文件约 30 秒完成转录</span>
+          </div>
+          <div class="filename">interview_thai_ep03.mp3</div>
+        </div>
+
+        <div class="progress-row">
+          <div class="progress-bar"><div></div></div>
+          <div class="pct">转录完成</div>
+        </div>
+
+        <div class="result-panel">
+          <div class="result-header">
+            <span class="badge">检测语种：泰语 · 置信度 96%</span>
+            <div class="tabs">
+              <div class="tab active">转录文本</div>
+              <div class="tab">时间戳</div>
+              <div class="tab">JSON</div>
+            </div>
+            <div class="meta"><span>引擎：Qwen3-ASR-1.7B</span><span>耗时 27.4s</span></div>
+          </div>
+          <div class="result-body">
+            <div class="line"><span class="ts">00:00:02</span>สวัสดีค่ะ วันนี้เรามาคุยกันเรื่องการเดินทางไปเที่ยวเชียงใหม่</div>
+            <div class="line"><span class="ts">00:00:11</span>ฉันคิดว่าช่วงเดือนธันวาคมอากาศดีที่สุด ไม่ร้อนไม่หนาวเกินไป</div>
+            <div class="line"><span class="ts">00:00:19</span>แล้วก็มีเทศกาลลอยกระทงด้วย บรรยากาศสวยงามมาก</div>
+            <div class="line"><span class="ts">00:00:27</span>เราควรจองที่พักล่วงหน้าอย่างน้อยหนึ่งเดือนนะคะ</div>
+
+            <div class="compare-row">
+              <div class="compare-col">
+                <h4>人工校对（原流程）</h4>
+                <p>播放音频 + 大模型流式识别，逐句人工核对，单条约 3–5 分钟</p>
+              </div>
+              <div class="compare-col">
+                <h4>本工具（新流程）</h4>
+                <p>本地引擎离线转录，单条约 30 秒，准确率 80%–90%，人工仅需微调</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-status">
+          <span><span class="dot-live"></span>模型已加载 · CUDA GPU float16</span>
+          <span>已处理 214 条 / 今日</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
