@@ -16,13 +16,13 @@
     .mono { font-family:"DM Mono",ui-monospace,monospace; }
     .shell { width:min(1280px,calc(100% - 44px)); margin:0 auto; }
     .topbar { position:sticky; top:0; z-index:20; display:flex; justify-content:space-between; align-items:center; gap:24px; padding:17px 0; background:rgba(237,236,231,.78); border-bottom:1px solid rgba(24,33,30,.11); backdrop-filter:blur(18px); }
-    .brand { display:flex; align-items:center; gap:10px; font-size:13px; font-weight:800; letter-spacing:-.03em; }
-    .brand-mark { width:24px; height:24px; display:grid; place-items:center; border-radius:7px 3px 7px 3px; color:#e8fff5; background:var(--green); font-size:11px; }
+    .brand { display:flex; align-items:center; font-size:13px; font-weight:800; letter-spacing:-.03em; }
     .nav { display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end; }
     .nav a { padding:7px 10px; color:var(--muted); font-size:11px; border-radius:999px; }
     .nav a:hover { color:var(--ink); background:var(--mint); }
     .hero { display:flex; flex-direction:column; gap:18px; padding:56px 0 25px; position:relative; }
-    .hero-main { min-height:0; padding:20px 24px; display:grid; grid-template-columns:minmax(250px,.7fr) minmax(0,1.3fr); gap:28px; align-items:center; background:transparent; border-top:1px solid var(--line); border-bottom:1px solid var(--line); position:relative; }
+    .hero-brief { overflow:hidden; border:1px solid var(--line); border-radius:22px; background:rgba(255,255,255,.2); }
+    .hero-main { min-height:0; padding:20px 24px; display:grid; grid-template-columns:minmax(250px,.7fr) minmax(0,1.3fr); gap:28px; align-items:center; background:transparent; border-bottom:1px solid var(--line); position:relative; }
     .hero-main::after { display:none; }
     .eyebrow { color:var(--green); font-size:10px; letter-spacing:.16em; text-transform:uppercase; }
     h1 { max-width:700px; margin:0; font-size:clamp(24px,3.2vw,42px); line-height:1.08; letter-spacing:-.075em; font-weight:800; }
@@ -46,10 +46,10 @@
     .identity-avatar img { width:100%; height:100%; display:block; object-fit:cover; object-position:center top; filter:saturate(.8) contrast(1.02); }
     .identity-name { margin-bottom:8px; font-size:clamp(30px,3.6vw,44px); font-weight:800; letter-spacing:-.08em; }
     .identity-role { color:var(--muted); font-size:13px; line-height:1.55; }
-    .identity-note { display:flex; flex-direction:column; justify-content:center; min-height:118px; padding-left:32px; border-left:1px solid var(--line); color:#52645b; font-size:14px; line-height:1.75; position:relative; z-index:1; }
+    .identity-note { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:118px; padding:0 24px; border-left:1px solid var(--line); color:#52645b; font-size:14px; line-height:1.75; text-align:center; position:relative; z-index:1; }
     .identity-note b { display:block; margin-bottom:5px; color:var(--green); font-family:"DM Mono",monospace; font-size:10px; font-weight:500; letter-spacing:.08em; }
     .identity-note span { color:var(--muted); }
-    .signal-strip { display:grid; grid-template-columns:repeat(4,1fr); margin:0 0 86px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .signal-strip { display:grid; grid-template-columns:repeat(4,1fr); margin:0; border:0; }
     .signal { min-height:108px; display:flex; flex-direction:column; justify-content:space-between; gap:9px; padding:16px 17px; border-right:1px solid var(--line); }
     .signal:last-child { border-right:0; }
     .signal-no { color:var(--green); font-family:"DM Mono",monospace; font-size:9px; letter-spacing:.08em; }
@@ -155,27 +155,28 @@
     .reveal.in { opacity:1; transform:none; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
     @keyframes modalIn { from { opacity:0; transform:translateY(10px) scale(.98); } to { opacity:1; transform:none; } }
-    @media (max-width:900px) { .experience,.evidence-grid,.contact { grid-template-columns:1fr; } .signal-strip { grid-template-columns:repeat(2,1fr); margin-bottom:75px; } .methods { grid-template-columns:repeat(2,1fr); } .project-grid,.project-grid.supporting { grid-template-columns:1fr; max-width:none; } .identity-strip { grid-template-columns:auto 1fr; } .identity-note { grid-column:1 / -1; padding:12px 0 0; border-left:0; border-top:1px solid var(--line); } }
-    @media (max-width:620px) { .shell { width:min(100% - 26px,560px); } .topbar { align-items:flex-start; } .nav { display:none; } .hero { padding-top:38px; gap:13px; } .hero-main { grid-template-columns:1fr; gap:13px; padding:18px 0; } .hero-main h1 { font-size:30px; } .hero-foot { justify-content:flex-start; margin-top:0; } .identity-strip { grid-template-columns:1fr; gap:16px; min-height:0; padding:22px; } .identity-person { min-width:0; } .identity-avatar { width:90px; height:116px; } .identity-note { grid-column:auto; min-height:0; padding:14px 0 0; border-left:0; border-top:1px solid var(--line); } .section-head { display:block; } .section-desc { margin-top:12px; } .methods { grid-template-columns:1fr; } .job-summary { grid-template-columns:1fr auto; } .job-date { grid-column:1 / -1; } .job-detail { padding:0 20px 20px; } .evidence-grid { gap:12px; } .modal-gallery { grid-template-columns:1fr; } .contact-main h2 { font-size:35px; } }
+    @media (max-width:900px) { .experience,.evidence-grid,.contact { grid-template-columns:1fr; } .signal-strip { grid-template-columns:repeat(2,1fr); } .methods { grid-template-columns:repeat(2,1fr); } .project-grid,.project-grid.supporting { grid-template-columns:1fr; max-width:none; } .identity-strip { grid-template-columns:auto 1fr; } .identity-note { grid-column:1 / -1; padding:12px 18px 0; border-left:0; border-top:1px solid var(--line); } }
+    @media (max-width:620px) { .shell { width:min(100% - 26px,560px); } .topbar { align-items:flex-start; } .nav { display:none; } .hero { padding-top:38px; gap:13px; } .hero-brief { border-radius:18px; } .hero-main { grid-template-columns:1fr; gap:13px; padding:18px 16px; } .hero-main h1 { font-size:30px; } .hero-foot { justify-content:flex-start; margin-top:0; } .identity-strip { grid-template-columns:1fr; gap:16px; min-height:0; padding:22px; } .identity-person { min-width:0; } .identity-avatar { width:90px; height:116px; } .identity-note { grid-column:auto; min-height:0; padding:14px 0 0; border-left:0; border-top:1px solid var(--line); } .section-head { display:block; } .section-desc { margin-top:12px; } .methods { grid-template-columns:1fr; } .job-summary { grid-template-columns:1fr auto; } .job-date { grid-column:1 / -1; } .job-detail { padding:0 20px 20px; } .evidence-grid { gap:12px; } .modal-gallery { grid-template-columns:1fr; } .contact-main h2 { font-size:35px; } }
   </style>
 </head>
 <body>
   <div class="shell">
     <header class="topbar">
-      <a class="brand" href="#top"><span class="brand-mark">WZ</span><span>个人能力档案</span></a>
+      <a class="brand" href="#top">个人能力档案</a>
       <nav class="nav"><a href="#experience">工作经历</a><a href="#methods">工作方式</a><a href="#evidence">能力证据</a><a href="#projects">项目作品</a><a href="#contact">联系</a></nav>
     </header>
 
     <main id="top">
       <section class="hero reveal">
         <div class="identity-strip reveal"><div class="identity-person"><div class="identity-avatar"><img src="1780027580585_副本.png" alt="王梓琦"></div><div><div class="identity-name">王梓琦</div><div class="identity-role">AI 项目专员 · 内容运营 · 多模态数据</div></div></div><div class="identity-note"><b>个人简介</b><span>从内容运营和多模态数据质量工作出发，持续把重复、耗时的工作整理成工具、流程和可复用方案。</span></div><div class="identity-note"><b>当前方向</b><span>AI 工具搭建 · 数据流程优化 · 模型质量反馈</span></div></div>
-        <div class="hero-main">
-          <div><div class="eyebrow">能力主张</div><h1>从业务问题到<br>AI 工具</h1><p class="hero-copy">从真实工作流程出发，把重复问题拆成工具、流程和可复用方案。</p></div>
-          <div class="hero-foot"><span class="pill">内容运营</span><span class="pill">AI 数据与评测</span><span class="pill">工具开发</span><span class="pill">场景与标准</span></div>
+        <div class="hero-brief">
+          <div class="hero-main">
+            <div><div class="eyebrow">能力主张</div><h1>从业务问题到<br>AI 工具</h1><p class="hero-copy">从真实工作流程出发，把重复问题拆成工具、流程和可复用方案。</p></div>
+            <div class="hero-foot"><span class="pill">内容运营</span><span class="pill">AI 数据与评测</span><span class="pill">工具开发</span><span class="pill">场景与标准</span></div>
+          </div>
+          <div class="signal-strip reveal"><div class="signal"><span class="signal-no">01 / 业务调研</span><b>理解工作痛点</b><span>从内容、质检和竞品工作中找到重复、耗时、易错环节。</span></div><div class="signal"><span class="signal-no">02 / AI 工具搭建</span><b>搭建 AI 工具</b><span>把本地模型、浏览器插件和脚本接进真实工作流。</span></div><div class="signal"><span class="signal-no">03 / 流程方案</span><b>连接数据与流程</b><span>处理数据、规则、文档和信息整合，不止做单点演示。</span></div><div class="signal"><span class="signal-no">04 / 持续迭代</span><b>沉淀可复用方案</b><span>用 Prompt、PRD、SOP 和反馈把方案交付并持续迭代。</span></div></div>
         </div>
       </section>
-
-      <div class="signal-strip reveal"><div class="signal"><span class="signal-no">01 / 业务调研</span><b>理解工作痛点</b><span>从内容、质检和竞品工作中找到重复、耗时、易错环节。</span></div><div class="signal"><span class="signal-no">02 / AI 工具搭建</span><b>搭建 AI 工具</b><span>把本地模型、浏览器插件和脚本接进真实工作流。</span></div><div class="signal"><span class="signal-no">03 / 流程方案</span><b>连接数据与流程</b><span>处理数据、规则、文档和信息整合，不止做单点演示。</span></div><div class="signal"><span class="signal-no">04 / 持续迭代</span><b>沉淀可复用方案</b><span>用 Prompt、PRD、SOP 和反馈把方案交付并持续迭代。</span></div></div>
 
       <section class="section" id="experience">
         <div class="section-head"><div><div class="section-kicker">01 / 工作经历</div><h2>先看我做过什么工作。</h2></div><p class="section-desc">项目不是孤立的兴趣展示，而是从工作场景里长出来的能力证据。点击时间线，展开每段经历的职责、方法和结果。</p></div>
