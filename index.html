@@ -1,430 +1,262 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>王梓琦 — 擅长领域与技能名单</title>
-<style>
-  :root{
-    --bg:#f2f1ee;
-    --card:#ffffff;
-    --line:rgba(0,0,0,0.08);
-    --text:#1d1d1f;
-    --muted:#6e6e73;
-    --accent:#1d1d1f;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
-    line-height:1.75;
-    overflow-x:hidden;
-  }
-  ::selection{ background:var(--text); color:#fff; }
-
-  /* minimal background with diagonal stripe texture */
-  .bg-glow{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    background:
-      radial-gradient(900px circle at 50% 0%, rgba(0,0,0,0.03), transparent 60%),
-      repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 14px);
-  }
-
-  .noise{ display:none; }
-
-  /* side nav dots */
-  .dotnav{
-    position:fixed; right:28px; top:50%; transform:translateY(-50%);
-    z-index:50; display:flex; flex-direction:column; gap:16px;
-  }
-  .dotnav a{
-    width:9px; height:9px; border-radius:50%;
-    background:rgba(0,0,0,0.15);
-    display:block; position:relative;
-    transition: background .3s;
-  }
-  .dotnav a::after{
-    content:attr(data-label);
-    position:absolute; right:20px; top:50%; transform:translateY(-50%);
-    font-size:12px; color:var(--muted); white-space:nowrap;
-    opacity:0; transition:opacity .25s; pointer-events:none;
-  }
-  .dotnav a:hover::after{ opacity:1; }
-  .dotnav a.active{ background:var(--text); box-shadow:0 0 0 4px rgba(0,0,0,0.1); }
-
-  section{
-    position:relative; z-index:2;
-    max-width:1080px; margin:0 auto;
-    padding:140px 32px;
-  }
-
-  /* ---------- HERO ---------- */
-  .hero{
-    min-height:100vh;
-    display:flex; align-items:center; gap:64px;
-    padding-top:80px; padding-bottom:80px;
-  }
-  .hero-text{
-    flex:1.3;
-    padding-right:64px; border-right:1px solid var(--line);
-  }
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:10px;
-    font-size:13px; color:var(--muted); letter-spacing:2px; text-transform:uppercase;
-    margin-bottom:22px; opacity:0; animation:fadeUp .8s .1s forwards;
-  }
-  .eyebrow .dot{ width:26px; height:1px; background:var(--text); }
-  h1.name{
-    font-size:clamp(40px,6vw,64px); font-weight:800; letter-spacing:1px;
-    position:relative; overflow:hidden; cursor:pointer;
-    height:clamp(56px,7.5vw,84px);
-    display:flex; align-items:center;
-    margin-bottom:28px;
-    opacity:0; animation:fadeUp .8s .2s forwards;
-  }
-  h1.name .main-text{
-    display:block; color:var(--text);
-    transition:transform .5s cubic-bezier(.7,0,.3,1), opacity .4s;
-  }
-  h1.name::before{
-    content:attr(data-replace);
-    position:absolute; left:0; top:0; height:100%; width:100%;
-    display:flex; align-items:center;
-    font-size:20px; font-weight:700; letter-spacing:0; color:var(--muted);
-    transform:translateY(100%);
-    transition:transform .5s cubic-bezier(.7,0,.3,1);
-    white-space:nowrap;
-  }
-  h1.name:hover .main-text{ transform:translateY(-100%); opacity:0; }
-  h1.name:hover::before{ transform:translateY(0); }
-  .pitch{
-    font-size:16px; color:var(--muted); max-width:560px; margin-bottom:36px;
-    opacity:0; animation:fadeUp .8s .4s forwards;
-  }
-  .hero-tags{
-    display:flex; flex-wrap:wrap; gap:10px;
-    opacity:0; animation:fadeUp .8s .5s forwards;
-  }
-  .hero-tags span{
-    font-size:12.5px; padding:7px 14px; border-radius:20px;
-    border:1px solid var(--line); color:var(--muted);
-    background:var(--card);
-  }
-  @keyframes fadeUp{ from{ opacity:0; transform:translateY(18px);} to{ opacity:1; transform:translateY(0);} }
-
-  .hero-photo{
-    flex:1; display:flex; justify-content:center;
-    opacity:0; animation:fadeIn 1s .3s forwards;
-  }
-  @keyframes fadeIn{ from{opacity:0; transform:scale(.94);} to{opacity:1; transform:scale(1);} }
-  .photo-frame{
-    width:clamp(230px,24vw,260px);
-    aspect-ratio:1728 / 2425;
-    border-radius:28px;
-    padding:1px;
-    background:var(--text);
-    position:relative;
-  }
-  .photo-frame img{
-    width:100%; height:100%; border-radius:27px;
-    object-fit:cover; object-position:center top;
-    display:block; background:#eee;
-  }
-  .photo-frame .inner-mask{
-    position:absolute; inset:1px; border-radius:27px; overflow:hidden;
-  }
-
-  .scroll-cue{
-    position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
-    font-size:12px; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:8px;
-  }
-  .scroll-cue .line{ width:1px; height:36px; background:linear-gradient(var(--muted), transparent); animation:pulse 1.6s ease-in-out infinite; }
-  @keyframes pulse{ 0%,100%{opacity:.3;} 50%{opacity:1;} }
-
-  /* ---------- reveal on scroll ---------- */
-  .reveal{ opacity:0; transform:translateY(36px); transition:opacity .8s ease, transform .8s ease; }
-  .reveal.in{ opacity:1; transform:translateY(0); }
-  .reveal-delay1.in{ transition-delay:.1s; }
-  .reveal-delay2.in{ transition-delay:.2s; }
-  .reveal-delay3.in{ transition-delay:.3s; }
-
-  /* ---------- section header ---------- */
-  .sec-head{ margin-bottom:56px; }
-  .sec-num{ display:flex; align-items:center; gap:12px; font-size:13px; color:var(--text); letter-spacing:2px; font-weight:600; margin-bottom:14px; }
-  .sec-num::before{ content:''; width:32px; height:1px; background:var(--text); display:inline-block; }
-  .sec-title{ font-size:clamp(28px,4vw,38px); font-weight:800; }
-  .sec-sub{ color:var(--muted); margin-top:12px; max-width:640px; font-size:15px; }
-
-  /* ---------- capability blocks ---------- */
-  .cap-block{
-    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
-    padding:64px 0; border-bottom:1px solid var(--line);
-  }
-  .cap-block:last-child{ border-bottom:none; }
-  .cap-block.reverse{ direction:rtl; }
-  .cap-block.reverse > *{ direction:ltr; }
-  .cap-copy h3{ font-size:24px; font-weight:700; margin-bottom:16px; }
-  .cap-copy h3 .idx{ color:var(--muted); margin-right:10px; font-weight:800; }
-  .cap-copy p{ color:var(--muted); font-size:14.5px; margin-bottom:14px; }
-  .cap-copy ul{ margin:18px 0 0; padding-left:0; list-style:none; }
-  .cap-copy li{
-    font-size:13.5px; color:var(--text); padding:10px 0 10px 22px; position:relative;
-    border-top:1px solid var(--line);
-  }
-  .cap-copy li:first-child{ border-top:none; }
-  .cap-copy li::before{
-    content:"—"; position:absolute; left:0; top:10px; color:var(--text);
-  }
-
-  .cap-visual{
-    position:relative; border-radius:16px; overflow:hidden;
-    box-shadow:0 20px 50px rgba(0,0,0,0.08);
-    border:1px solid var(--line);
-    transform:perspective(1000px) rotateY(-4deg) rotateX(1deg);
-    transition:transform .5s ease, box-shadow .5s ease;
-  }
-  .cap-block.reverse .cap-visual{ transform:perspective(1000px) rotateY(4deg) rotateX(1deg); }
-  .cap-visual:hover{ transform:perspective(1000px) rotateY(0) rotateX(0) scale(1.02); box-shadow:0 30px 60px rgba(0,0,0,0.12); }
-  .cap-visual img{ width:100%; display:block; }
-  .cap-visual .cap-tag{
-    position:absolute; top:14px; left:14px;
-    background:rgba(29,29,31,0.85); backdrop-filter:blur(6px);
-    border:1px solid rgba(255,255,255,0.1); font-size:11px; color:#fff;
-    padding:5px 12px; border-radius:20px;
-  }
-
-  .mini-gallery{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .mini-gallery img{ width:100%; border-radius:10px; display:block; border:1px solid var(--line); }
-  .mini-gallery .full{ grid-column:1 / -1; }
-
-  /* ---------- future direction cards ---------- */
-  .future-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
-  .future-card{
-    background:var(--card);
-    border:1px solid var(--line); border-radius:16px; padding:28px 24px;
-    box-shadow:0 12px 32px rgba(0,0,0,0.05);
-    transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
-    position:relative; overflow:hidden;
-  }
-  .future-card::before{
-    content:''; position:absolute; inset:0; opacity:0;
-    background:radial-gradient(300px circle at var(--mx,50%) var(--my,0%), rgba(0,0,0,0.05), transparent 60%);
-    transition:opacity .3s;
-  }
-  .future-card:hover::before{ opacity:1; }
-  .future-card:hover{ transform:translateY(-6px); box-shadow:0 20px 44px rgba(0,0,0,0.09); border-color:rgba(0,0,0,0.16); }
-  .future-card .fc-num{ font-size:34px; font-weight:800; color:rgba(0,0,0,0.1); margin-bottom:8px; }
-  .future-card h4{ font-size:17px; margin-bottom:10px; font-weight:700; }
-  .future-card p{ font-size:13.5px; color:var(--muted); }
-
-  /* ---------- background timeline ---------- */
-  .story{
-    background:var(--card); border:1px solid var(--line); border-radius:20px; padding:40px;
-    box-shadow:0 12px 32px rgba(0,0,0,0.05);
-  }
-  .story p{ color:var(--muted); font-size:14.5px; margin-bottom:14px; }
-  .story p:last-child{ margin-bottom:0; }
-  .story b{ color:var(--text); }
-  .story .highlight{
-    display:inline-block; background:rgba(0,0,0,0.06); color:var(--text);
-    padding:2px 8px; border-radius:6px; font-weight:600;
-  }
-
-  /* ---------- footer ---------- */
-  footer{
-    text-align:center; padding:80px 32px 100px; color:var(--muted); font-size:13px;
-    position:relative; z-index:2;
-  }
-  footer .foot-title{ font-size:26px; color:var(--text); font-weight:800; margin-bottom:16px; }
-  footer .foot-sub{ margin-bottom:30px; }
-
-  @media (max-width: 860px){
-    .hero{ flex-direction:column-reverse; text-align:center; padding-top:120px; }
-    .hero-text{ padding-right:0; border-right:none; }
-    .hero-tags{ justify-content:center; }
-    .photo-frame{ width:min(230px,68vw); }
-    .cap-block, .cap-block.reverse{ grid-template-columns:1fr; direction:ltr; }
-    .future-grid{ grid-template-columns:1fr; }
-    .dotnav{ display:none; }
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>王梓琦 · 个人能力档案</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+    :root { --bg:#edece7; --paper:#f8f8f3; --ink:#18211e; --muted:#718079; --line:#d3d9d3; --green:#126b51; --mint:#b7ead7; --yellow:#e9c566; --red:#d86d5e; --deep:#1d3036; --deep-text:#eef8f6; --deep-muted:#b5d2d0; --deep-line:rgba(191,225,224,.28); --shadow:0 24px 70px rgba(31,45,38,.11); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:radial-gradient(circle at 12% 5%,rgba(181,234,215,.48),transparent 28rem),radial-gradient(circle at 90% 28%,rgba(233,197,102,.22),transparent 26rem),var(--bg); font-family:Manrope,"PingFang SC","Microsoft YaHei",sans-serif; -webkit-font-smoothing:antialiased; }
+    button { font:inherit; color:inherit; }
+    button, a { -webkit-tap-highlight-color:transparent; }
+    a { color:inherit; text-decoration:none; }
+    .mono { font-family:"DM Mono",ui-monospace,monospace; }
+    .shell { width:min(1280px,calc(100% - 44px)); margin:0 auto; }
+    .topbar { position:sticky; top:0; z-index:20; display:flex; justify-content:space-between; align-items:center; gap:24px; padding:17px 0; background:rgba(237,236,231,.78); border-bottom:1px solid rgba(24,33,30,.11); backdrop-filter:blur(18px); }
+    .brand { display:flex; align-items:center; gap:10px; font-size:13px; font-weight:800; letter-spacing:-.03em; }
+    .brand-mark { width:24px; height:24px; display:grid; place-items:center; border-radius:7px 3px 7px 3px; color:#e8fff5; background:var(--green); font-size:11px; }
+    .nav { display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end; }
+    .nav a { padding:7px 10px; color:var(--muted); font-size:11px; border-radius:999px; }
+    .nav a:hover { color:var(--ink); background:var(--mint); }
+    .hero { display:block; padding:72px 0 25px; position:relative; }
+    .hero-main { min-height:405px; padding:36px; display:flex; flex-direction:column; justify-content:space-between; background:var(--paper); border:1px solid var(--line); border-radius:23px; box-shadow:var(--shadow); overflow:hidden; position:relative; }
+    .hero-main::after { content:""; position:absolute; right:-90px; bottom:-115px; width:300px; height:300px; border:1px solid rgba(18,107,81,.18); border-radius:50%; box-shadow:0 0 0 34px rgba(18,107,81,.05),0 0 0 68px rgba(18,107,81,.035); pointer-events:none; }
+    .eyebrow { color:var(--green); font-size:10px; letter-spacing:.16em; text-transform:uppercase; }
+    h1 { max-width:700px; margin:42px 0 24px; font-size:clamp(38px,5.2vw,70px); line-height:1.02; letter-spacing:-.075em; font-weight:800; }
+    .hero-copy { max-width:620px; margin:0; color:#52645b; font-size:15px; line-height:1.85; }
+    .hero-foot { display:flex; gap:8px; flex-wrap:wrap; margin-top:30px; }
+    .pill { padding:7px 10px; color:#406052; border:1px solid #c8d7cf; border-radius:999px; background:#edf7f1; font-family:"DM Mono",monospace; font-size:10px; }
+    .profile-card { display:none; }
+    .profile-card::before { display:none; }
+    .profile-top { display:none; }
+    .avatar { width:112px; height:148px; margin:0 0 10px auto; overflow:hidden; border-radius:12px 12px 4px 12px; border:1px solid #c3d3cc; background:#fff; box-shadow:0 14px 28px rgba(31,45,38,.12); position:relative; z-index:1; }
+    .avatar img { width:100%; height:100%; display:block; object-fit:cover; object-position:center top; filter:saturate(.8) contrast(1.02); }
+    .profile-bottom { position:relative; z-index:1; }
+    .profile-bottom { text-align:right; }
+    .profile-name { margin-bottom:4px; font-size:18px; font-weight:800; letter-spacing:-.06em; }
+    .profile-role { color:var(--muted); font-size:10px; line-height:1.5; }
+    .identity-strip { display:grid; grid-template-columns:auto 1fr 1.35fr; gap:20px; align-items:center; margin:0 0 86px; padding:16px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .identity-person { display:flex; align-items:center; gap:12px; min-width:205px; }
+    .identity-avatar { width:56px; height:72px; flex:0 0 auto; overflow:hidden; border:1px solid #c3d3cc; border-radius:9px 9px 3px 9px; background:#fff; }
+    .identity-avatar img { width:100%; height:100%; display:block; object-fit:cover; object-position:center top; filter:saturate(.8) contrast(1.02); }
+    .identity-name { margin-bottom:4px; font-size:17px; font-weight:800; letter-spacing:-.05em; }
+    .identity-role { color:var(--muted); font-size:11px; line-height:1.5; }
+    .identity-note { padding-left:20px; border-left:1px solid var(--line); color:#52645b; font-size:12px; line-height:1.7; }
+    .identity-note b { display:block; margin-bottom:3px; color:var(--green); font-family:"DM Mono",monospace; font-size:9px; font-weight:500; letter-spacing:.08em; }
+    .identity-note span { color:var(--muted); }
+    .signal-strip { display:grid; grid-template-columns:repeat(4,1fr); margin:0 0 86px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .signal { min-height:108px; display:flex; flex-direction:column; justify-content:space-between; gap:9px; padding:16px 17px; border-right:1px solid var(--line); }
+    .signal:last-child { border-right:0; }
+    .signal-no { color:var(--green); font-family:"DM Mono",monospace; font-size:9px; letter-spacing:.08em; }
+    .signal b { display:block; font-size:17px; letter-spacing:-.06em; }
+    .signal span:not(.signal-no) { color:var(--muted); font-size:11px; line-height:1.55; }
+    section { scroll-margin-top:84px; }
+    .section { padding:0 0 105px; }
+    .section-head { display:flex; align-items:end; justify-content:space-between; gap:30px; margin-bottom:27px; }
+    .section-kicker { margin-bottom:9px; color:var(--green); font-family:"DM Mono",monospace; font-size:10px; letter-spacing:.14em; }
+    h2 { margin:0; font-size:33px; letter-spacing:-.08em; }
+    .section-desc { max-width:480px; margin:0; color:var(--muted); font-size:12px; line-height:1.7; }
+    .experience { display:grid; grid-template-columns:.7fr 1.3fr; gap:20px; }
+    .experience-intro { padding:25px; border-radius:18px; color:#effcf6; background:var(--green); }
+    .experience-intro h3 { max-width:220px; margin:48px 0 15px; font-size:31px; line-height:.95; letter-spacing:-.09em; }
+    .experience-intro p { max-width:260px; color:#b9dfd0; font-size:12px; line-height:1.75; }
+    .experience-intro .mini-status { display:flex; gap:8px; align-items:center; margin-top:52px; color:#d9f9ec; font-family:"DM Mono",monospace; font-size:10px; }
+    .mini-status i { width:7px; height:7px; border-radius:50%; background:#a7f1ca; box-shadow:0 0 0 5px rgba(167,241,202,.14); }
+    .timeline { display:grid; gap:10px; }
+    .job { overflow:hidden; background:var(--paper); border:1px solid var(--line); border-radius:17px; transition:.22s; }
+    .job:hover { border-color:#a8c7b8; box-shadow:0 10px 28px rgba(31,45,38,.07); }
+    .job-summary { width:100%; display:grid; grid-template-columns:125px 1fr auto; gap:15px; align-items:center; padding:19px 20px; border:0; background:transparent; text-align:left; cursor:pointer; }
+    .job-date { color:var(--green); font-family:"DM Mono",monospace; font-size:10px; line-height:1.5; }
+    .job-title { font-size:16px; font-weight:800; letter-spacing:-.05em; }
+    .job-sub { margin-top:4px; color:var(--muted); font-size:11px; }
+    .job-arrow { color:var(--green); font-size:20px; transition:.2s; }
+    .job.is-open .job-arrow { transform:rotate(45deg); }
+    .job-detail { display:none; padding:0 20px 20px 160px; }
+    .job.is-open .job-detail { display:block; animation:fadeIn .25s ease; }
+    .job-detail p { margin:0 0 12px; color:#53635b; font-size:12px; line-height:1.75; }
+    .evidence-line { display:flex; gap:6px; flex-wrap:wrap; }
+    .evidence-chip { padding:6px 8px; color:#2f6551; border:1px solid #c7ddd2; background:#eef8f2; border-radius:5px; font-family:"DM Mono",monospace; font-size:9px; }
+    .methods { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .method { min-height:155px; padding:19px; background:var(--paper); border:1px solid var(--line); border-radius:16px; cursor:pointer; transition:.22s; }
+    .method:hover, .method.is-active { background:#d8f2e7; border-color:#99cbb6; transform:translateY(-3px); }
+    .method-index { color:#a3b1aa; font-family:"DM Mono",monospace; font-size:10px; }
+    .method h3 { margin:33px 0 7px; font-size:17px; letter-spacing:-.06em; }
+    .method p { margin:0; color:var(--muted); font-size:11px; line-height:1.65; }
+    .method-detail { margin-top:15px; min-height:54px; padding:13px 15px; color:#496157; border-left:3px solid var(--green); background:rgba(248,248,243,.68); font-size:12px; line-height:1.7; }
+    .evidence-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:20px; }
+    .evidence-panel { padding:0 4px 0 0; border:0; border-radius:0; background:transparent; }
+    .panel-head { display:flex; justify-content:space-between; gap:12px; align-items:start; margin-bottom:0; padding:0 0 14px; border-bottom:1px solid var(--ink); }
+    .panel-head h3 { margin:0; font-size:19px; letter-spacing:-.06em; }
+    .panel-head span { color:var(--green); font-family:"DM Mono",monospace; font-size:9px; }
+    .evidence-list { display:grid; }
+    .evidence-item { width:100%; display:grid; grid-template-columns:72px 1fr auto; gap:10px; align-items:center; padding:15px 9px 15px 0; border:0; border-bottom:1px solid #dfe4df; background:transparent; text-align:left; cursor:pointer; transition:.2s; }
+    .evidence-item:hover { padding-left:9px; background:rgba(216,242,231,.45); }
+    .evidence-item:hover strong { color:var(--green); }
+    .evidence-item .type { color:#899890; font-family:"DM Mono",monospace; font-size:9px; }
+    .evidence-item strong { font-size:12px; transition:.2s; }
+    .evidence-item .open { color:var(--green); font-size:15px; }
+    .prompt-box { min-height:240px; padding:18px; color:#def4f2; background:var(--deep); border-radius:13px; position:relative; overflow:hidden; }
+    .prompt-box::after { content:"观察 → 方案 → 反馈"; position:absolute; right:-18px; bottom:17px; color:rgba(191,225,224,.14); transform:rotate(-90deg); font-family:"DM Mono",monospace; font-size:10px; letter-spacing:.1em; }
+    .prompt-box .mono { color:#9bcaca; font-size:9px; }
+    .prompt-box pre { white-space:pre-wrap; margin:18px 0 0; color:#cbe6e2; font-family:"DM Mono",monospace; font-size:11px; line-height:1.8; }
+    .prompt-box b { color:#f4d27b; font-weight:500; }
+    .projects-wrap { padding-top:7px; }
+    .project-group-label { margin:28px 0 11px; color:var(--green); font-family:"DM Mono",monospace; font-size:10px; letter-spacing:.14em; }
+    .project-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .project-grid.supporting { grid-template-columns:repeat(2, minmax(0, 1fr)); max-width:850px; }
+    .project { min-height:345px; display:flex; flex-direction:column; padding:18px; border:1px solid var(--line); border-radius:18px; background:var(--paper); cursor:pointer; transition:.25s; overflow:hidden; position:relative; }
+    .project:hover { transform:translateY(-5px); box-shadow:var(--shadow); }
+    .project-media { height:145px; margin:-18px -18px 17px; overflow:hidden; background:#15201b; }
+    .project-media img { width:100%; height:100%; display:block; object-fit:cover; object-position:top left; transition:.35s; }
+    .project:hover .project-media img { transform:scale(1.04); }
+    .project:nth-child(2) .project-media { background:#eef1f7; }
+    .project:nth-child(3) .project-media { background:#fff; }
+    .project-grid.supporting .project:first-child .project-media { background:#242033; }
+    .project-grid.supporting .project:last-child .project-media { background:#191919; }
+    .monitor-collage { display:grid; grid-template-columns:1.25fr .75fr; gap:4px; height:100%; }
+    .monitor-collage img { width:100%; height:100%; min-width:0; object-fit:cover; object-position:top left; }
+    .monitor-collage img:last-child { object-position:top center; }
+    .project-gallery { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; width:100%; height:100%; }
+    .project-gallery.four { grid-template-columns:1.25fr .75fr; grid-template-rows:repeat(2,minmax(0,1fr)); }
+    .project-gallery.four img:first-child { grid-row:1 / 3; }
+    .project-gallery img { width:100%; height:100%; min-width:0; object-fit:cover; object-position:center; }
+    .project-type { color:var(--green); font-family:"DM Mono",monospace; font-size:9px; }
+    .project h3 { margin:9px 0 7px; font-size:20px; letter-spacing:-.07em; }
+    .project p { margin:0; color:var(--muted); font-size:11px; line-height:1.7; }
+    .project-foot { display:flex; justify-content:space-between; gap:10px; align-items:end; margin-top:auto; padding-top:16px; color:#5f746a; font-size:10px; }
+    .project-foot b { font-size:15px; color:var(--ink); }
+    .contact { display:grid; grid-template-columns:1.2fr .8fr; gap:20px; padding-bottom:72px; }
+    .contact-main { padding:28px; color:var(--deep-text); background:var(--deep); border-radius:21px; }
+    .contact-main h2 { max-width:480px; margin:30px 0 25px; font-size:42px; line-height:.95; }
+    .contact-main p { max-width:520px; color:var(--deep-muted); font-size:12px; line-height:1.75; }
+    .contact-links { display:grid; align-content:stretch; gap:10px; }
+    .contact-link { display:flex; justify-content:space-between; align-items:center; padding:17px 19px; color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:13px; font-size:12px; }
+    .contact-link:hover { background:var(--mint); border-color:#99cbb6; }
+    .contact-link span { color:var(--muted); font-family:"DM Mono",monospace; font-size:9px; }
+    .modal { position:fixed; inset:0; z-index:50; display:none; place-items:center; padding:25px; background:rgba(19,26,22,.72); backdrop-filter:blur(15px); }
+    .modal.is-open { display:grid; }
+    .modal-card { width:min(720px,100%); max-height:88vh; overflow:auto; padding:25px; background:var(--paper); border:1px solid #c1d4c9; border-radius:19px; box-shadow:0 35px 100px rgba(0,0,0,.28); animation:modalIn .25s ease; }
+    .modal-head { display:flex; justify-content:space-between; gap:18px; margin-bottom:20px; }
+    .modal-head h2 { margin:6px 0 0; font-size:28px; }
+    .modal-close { border:0; background:transparent; color:var(--green); cursor:pointer; font-family:"DM Mono",monospace; font-size:10px; }
+    .modal-copy { color:#53635b; font-size:13px; line-height:1.8; }
+    .modal-copy h3 { margin:22px 0 8px; color:var(--ink); font-size:14px; }
+    .modal-copy ul { padding-left:18px; }
+    .modal-copy li { margin:5px 0; }
+    .modal-image { display:block; width:auto; max-width:100%; height:auto; max-height:none; object-fit:initial; object-position:initial; margin:24px auto 0; border:0; border-radius:10px; background:transparent; }
+    .modal-gallery { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:24px; }
+    .modal-gallery img { width:100%; height:auto; display:block; border-radius:9px; background:transparent; }
+    .reveal { opacity:0; transform:translateY(16px); transition:.65s ease; }
+    .reveal.in { opacity:1; transform:none; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+    @keyframes modalIn { from { opacity:0; transform:translateY(10px) scale(.98); } to { opacity:1; transform:none; } }
+    @media (max-width:900px) { .experience,.evidence-grid,.contact { grid-template-columns:1fr; } .signal-strip { grid-template-columns:repeat(2,1fr); margin-bottom:75px; } .methods { grid-template-columns:repeat(2,1fr); } .project-grid,.project-grid.supporting { grid-template-columns:1fr; max-width:none; } .identity-strip { grid-template-columns:auto 1fr; } .identity-note { grid-column:1 / -1; padding:12px 0 0; border-left:0; border-top:1px solid var(--line); } }
+    @media (max-width:620px) { .shell { width:min(100% - 26px,560px); } .topbar { align-items:flex-start; } .nav { display:none; } .hero { padding-top:38px; } .hero-main { min-height:450px; padding:22px; } .hero-main h1 { margin-top:55px; } .identity-strip { grid-template-columns:1fr; gap:13px; } .identity-person { min-width:0; } .identity-note { grid-column:auto; } .section-head { display:block; } .section-desc { margin-top:12px; } .methods { grid-template-columns:1fr; } .job-summary { grid-template-columns:1fr auto; } .job-date { grid-column:1 / -1; } .job-detail { padding:0 20px 20px; } .evidence-grid { gap:12px; } .modal-gallery { grid-template-columns:1fr; } .contact-main h2 { font-size:35px; } }
+  </style>
 </head>
 <body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#top"><span class="brand-mark">WZ</span><span>个人能力档案</span></a>
+      <nav class="nav"><a href="#experience">工作经历</a><a href="#methods">工作方式</a><a href="#evidence">能力证据</a><a href="#projects">项目作品</a><a href="#contact">联系</a></nav>
+    </header>
 
-<div class="bg-glow"></div>
-<div class="noise"></div>
+    <main id="top">
+      <section class="hero reveal">
+        <div class="hero-main">
+          <div><div class="eyebrow">AI 项目专员 / 杭州</div><h1>从业务问题到<br>AI 工具</h1><p class="hero-copy">王梓琦。拥有内容运营、多模态数据与模型评测经验，也持续使用 AI 和本地工具解决真实工作流程中的重复问题。</p></div>
+          <div class="hero-foot"><span class="pill">内容运营</span><span class="pill">AI 数据与评测</span><span class="pill">工具开发</span><span class="pill">场景与标准</span></div>
+        </div>
+      </section>
 
-<nav class="dotnav" id="dotnav">
-  <a href="#hero" data-label="首页" class="active"></a>
-  <a href="#cap1" data-label="能力一"></a>
-  <a href="#cap2" data-label="能力二"></a>
-  <a href="#future" data-label="未来方向"></a>
-</nav>
+      <div class="identity-strip reveal"><div class="identity-person"><div class="identity-avatar"><img src="1780027580585_副本.png" alt="王梓琦"></div><div><div class="identity-name">王梓琦</div><div class="identity-role">AI 项目专员 · 内容运营 · 多模态数据</div></div></div><div class="identity-note"><b>个人简介</b><span>从内容运营和多模态数据质量工作出发，持续把重复、耗时的工作整理成工具、流程和可复用方案。</span></div><div class="identity-note"><b>当前方向</b><span>AI 工具搭建 · 数据流程优化 · 模型质量反馈</span></div></div>
 
-<section class="hero" id="hero">
-  <div class="hero-text">
-    <div class="eyebrow"><span class="dot"></span>Live 音视频方向</div>
-    <h1 class="name" data-replace="会做工具、也懂内容场景"><span class="main-text">王梓琦</span></h1>
-    <p class="pitch">
-      两年内容运营经验，加上业余时间自己动手用 AI 做工具的习惯，让我既能理解「一个场景该怎么设计」，也能使用 AI 将重复劳动变简单。
-      这份名单整理了我目前会的三件事，以及接下来最想深入做的三个方向。
-    </p>
-    <div class="hero-tags">
-      <span>动手做工具</span>
-      <span>内容运营与标签体系</span>
-      <span>对话场景设计</span>
-      <span>数据处理全流程</span>
-    </div>
-  </div>
-  <div class="hero-photo">
-    <div class="photo-frame">
-      <div class="inner-mask"><img src="1780027580585_副本.png" alt="王梓琦"></div>
-    </div>
-  </div>
-  <div class="scroll-cue"><span>向下滚动</span><span class="line"></span></div>
-</section>
+      <div class="signal-strip reveal"><div class="signal"><span class="signal-no">01 / 业务调研</span><b>理解工作痛点</b><span>从内容、质检和竞品工作中找到重复、耗时、易错环节。</span></div><div class="signal"><span class="signal-no">02 / AI 工具搭建</span><b>搭建 AI 工具</b><span>把本地模型、浏览器插件和脚本接进真实工作流。</span></div><div class="signal"><span class="signal-no">03 / 流程方案</span><b>连接数据与流程</b><span>处理数据、规则、文档和信息整合，不止做单点演示。</span></div><div class="signal"><span class="signal-no">04 / 持续迭代</span><b>沉淀可复用方案</b><span>用 Prompt、PRD、SOP 和反馈把方案交付并持续迭代。</span></div></div>
 
-<section id="cap1">
-  <div class="sec-head reveal">
-    <div class="sec-num">CAPABILITY 01</div>
-    <div class="sec-title">动手做工具，提升协作效率</div>
-    <div class="sec-sub">擅长发现工作流程中的效率痛点，并主动开发工具来解决。</div>
-  </div>
+      <section class="section" id="experience">
+        <div class="section-head"><div><div class="section-kicker">01 / 工作经历</div><h2>先看我做过什么工作。</h2></div><p class="section-desc">项目不是孤立的兴趣展示，而是从工作场景里长出来的能力证据。点击时间线，展开每段经历的职责、方法和结果。</p></div>
+        <div class="experience">
+          <div class="experience-intro"><div class="mono">职业轨迹</div><h3>从内容理解，到 AI 数据与工具。</h3><p>先在内容运营中理解分类、标签和用户兴趣，再进入多模态数据链路，开始处理模型质量、标注规则和数据交付。</p><div class="mini-status"><i></i>持续寻找真实场景中的效率问题</div></div>
+          <div class="timeline">
+            <article class="job is-open"><button class="job-summary" aria-expanded="true"><span class="job-date">2026.06 —<br>至今</span><span><span class="job-title">千问 C 端事业群</span><span class="job-sub">多模态 AI 训练 / 数据质量 / 模型评测</span></span><span class="job-arrow">＋</span></button><div class="job-detail"><p>服务音视频 Live、视频电话等多模态场景，对众包标注数据进行质检验收，识别错误、争议和边界样本，并将 bad case 整理为上游可执行的反馈。</p><div class="evidence-line"><span class="evidence-chip">音视频场景</span><span class="evidence-chip">标注质检</span><span class="evidence-chip">规则拉齐</span><span class="evidence-chip">bad case</span><span class="evidence-chip">数据交付</span></div></div></article>
+            <article class="job"><button class="job-summary" aria-expanded="false"><span class="job-date">2024.03 —<br>2026.06</span><span><span class="job-title">网易云音乐</span><span class="job-sub">曲库与内容分发运营专员</span></span><span class="job-arrow">＋</span></button><div class="job-detail"><p>负责 J-Pop、ACG、摇滚、粤语、运动等垂类的内容运营与标签治理，参与歌单、Banner、榜单、搜索词、曲库标签和模型训练数据建设。</p><div class="evidence-line"><span class="evidence-chip">10W+ 首标签</span><span class="evidence-chip">400+ 搜索词</span><span class="evidence-chip">16 支系列歌单</span><span class="evidence-chip">78,584 平均播放</span><span class="evidence-chip">标签提案</span></div></div></article>
+            <article class="job"><button class="job-summary" aria-expanded="false"><span class="job-date">2022.07 —<br>2023.04</span><span><span class="job-title">重庆大学建筑规划设计研究总院</span><span class="job-sub">城市设计岗 · 城乡规划本科背景</span></span><span class="job-arrow">＋</span></button><div class="job-detail"><p>参与项目前期资料整理、基础分析、方案文本和汇报材料制作，建立了从复杂信息中提炼结构、组织材料和交付成果的基础能力。</p><div class="evidence-line"><span class="evidence-chip">信息整理</span><span class="evidence-chip">方案表达</span><span class="evidence-chip">项目交付</span></div></div></article>
+          </div>
+        </div>
+      </section>
 
-  <div class="cap-block reveal">
-    <div class="cap-copy">
-      <h3><span class="idx">01</span>多语种录音转文字工具</h3>
-      <p>日常工作中经常需要核对不同语种的录音内容，逐句听译效率很低。为此我独立开发了一款带图形界面的转录工具，支持泰语、日语、韩语、维吾尔语、西班牙语等小语种。</p>
-      <ul>
-        <li>单条录音约半分钟即可完成转录，准确率八九成，人工只需微调即可使用</li>
-        <li>相比「播放音频 + 逐句核对」的旧流程效率提升明显</li>
-        <li>全程本地离线运行，无需联网即可完成转录</li>
-      </ul>
-    </div>
-    <div class="cap-visual">
-      <span class="cap-tag">自研工具</span>
-      <img src="assets/shot-asr-tool.png" alt="录音转文字工具">
-    </div>
-  </div>
+      <section class="section" id="methods">
+        <div class="section-head"><div><div class="section-kicker">02 / 工作方式</div><h2>再看我如何解决问题。</h2></div><p class="section-desc">把个人能力从形容词变成可以被观察的动作：发现、拆解、搭建、反馈。</p></div>
+        <div class="methods"><button class="method is-active" data-method="observe"><span class="method-index">01 / 观察</span><h3>发现问题</h3><p>从真实工作动作里找到重复、耗时和容易出错的环节。</p></button><button class="method" data-method="structure"><span class="method-index">02 / 拆解</span><h3>拆解场景</h3><p>明确输入、判断、输出和异常情况，形成清晰规则。</p></button><button class="method" data-method="build"><span class="method-index">03 / 搭建</span><h3>搭建工具</h3><p>使用 AI、脚本、插件或界面做出能被实际使用的方案。</p></button><button class="method" data-method="iterate"><span class="method-index">04 / 迭代</span><h3>反馈迭代</h3><p>跟进使用效果，沉淀为 Prompt、SOP、PRD 和复用模板。</p></button></div>
+        <div class="method-detail" id="method-detail">例：发现标注平台中反复翻找和人工比对很耗时，于是做出 LabelNav 的导航、Diff 和图片查看功能。</div>
+      </section>
 
-  <div class="cap-block reverse reveal">
-    <div class="cap-copy">
-      <h3><span class="idx">02</span>标注平台辅助插件</h3>
-      <p>针对标注平台使用中反复翻找内容、肉眼比对困难等问题，开发了一款浏览器插件来提升操作效率。</p>
-      <ul>
-        <li>侧边导航可直接点击跳转到对应内容，无需来回滚动查找</li>
-        <li>自动标出修改前后的差异，一眼看出改动位置</li>
-        <li>图片支持浮层查看，可拖动、旋转、缩放</li>
-      </ul>
-    </div>
-    <div class="cap-visual">
-      <span class="cap-tag">自研插件</span>
-      <img src="assets/shot-labelnav.png" alt="标注平台插件">
-    </div>
+      <section class="section" id="evidence">
+        <div class="section-head"><div><div class="section-kicker">03 / 能力证据</div><h2>能力不是标签，是一叠证据。</h2></div><p class="section-desc">除了工作经历和项目，还有 Prompt、PRD、Mockup、SOP 和工具界面，记录你是如何把想法落下来的。</p></div>
+        <div class="evidence-grid">
+          <div class="evidence-panel"><div class="panel-head"><h3>能力证据</h3><span>可点击资料</span></div><div class="evidence-list"><button class="evidence-item" data-evidence="asr"><span class="type">提示词</span><strong>ASR 本地引擎转录工具箱</strong><span class="open">↗</span></button><button class="evidence-item" data-evidence="label"><span class="type">需求文档</span><strong>LabelNav 标注辅助插件 v1.3.0</strong><span class="open">↗</span></button><button class="evidence-item" data-evidence="monitor"><span class="type">工作流</span><strong>竞品监控机器人</strong><span class="open">↗</span></button><button class="evidence-item" data-evidence="ops"><span class="type">流程规范</span><strong>垂类专区、搜索词与曲风巡查方法</strong><span class="open">↗</span></button></div></div>
+          <div class="prompt-box"><div class="mono">工作流程片段</div><pre><b>观察：</b>人工播放音频、逐句听写、反复核对<br><b>问题：</b>多语种与方言场景耗时，隐私数据不宜上传<br><b>方案：</b>本地部署 · 多引擎切换 · 统一输出<br><b>沉淀：</b>Qwen3 / Whisper / FunASR / UniASR / MMS<br><br><span style="color:#87bea9">→ 一套工具，多引擎切换；数据不出本机。</span></pre></div>
+        </div>
+      </section>
+
+      <section class="section projects-wrap" id="projects">
+        <div class="section-head"><div><div class="section-kicker">04 / 项目作品</div><h2>最后，用项目证明。</h2></div><p class="section-desc">主项目服务于目标岗位，支撑项目展示你的跨场景产品能力。它们不再被当成同等重量的卡片。</p></div>
+        <div class="project-group-label">核心项目 / 与目标岗位直接相关</div>
+        <div class="project-grid"><article class="project" data-project="asr"><div class="project-media"><img src="assets/shot-asr-tool.png" alt="ASR 本地引擎工具界面"></div><div class="project-type">本地 AI 工具</div><h3>ASR 本地引擎工具箱</h3><p>面向多语种、多方言和隐私敏感场景的离线转录工具，支持多引擎对比和多种输出格式。</p><div class="project-foot"><span>Python / Qwen / Whisper / FunASR</span><b>↗</b></div></article><article class="project" data-project="label"><div class="project-media"><img src="assets/shot-labelnav.png" alt="LabelNav 标注辅助插件界面"></div><div class="project-type">工作流插件</div><h3>LabelNav 标注辅助插件</h3><p>针对标注、质检中的查找、图片查看和文本比对痛点，做成可复用的浏览器效率工具。</p><div class="project-foot"><span>浏览器插件 / 文本对比 / 交互</span><b>↗</b></div></article><article class="project" data-project="monitor"><div class="project-media"><img src="assets/competitor-dashboard.png" alt="竞品监控机器人监控中心"></div><div class="project-type">业务自动化</div><h3>竞品监控机器人</h3><p>从真实商品页面采集数据，经 AI 解析后在监控中心呈现价格、活动、赠品和置信度。</p><div class="project-foot"><span>Chrome / Flask / SQLite / AI</span><b>↗</b></div></article></div>
+        <div class="project-group-label">辅助项目 / 展示跨场景产品能力</div>
+        <div class="project-grid supporting"><article class="project" data-project="netease"><div class="project-media"><div class="project-gallery four"><img src="assets/netease-intro.png" alt="NetEase Weekly Clipper 视频片头"><img src="assets/netease-album.png" alt="NetEase Weekly Clipper 曲目画面"><img src="assets/netease-render.png" alt="NetEase Weekly Clipper 视觉渲染画面"><img src="assets/netease-single.png" alt="NetEase Weekly Clipper 单曲视频画面"></div></div><div class="project-type">媒体自动化</div><h3>NetEase Weekly Clipper</h3><p>把歌单抓取、AI 乐评、视觉编辑、字幕和视频渲染串成自动化内容生产流程。</p><div class="project-foot"><span>Python / Gemini / MoviePy / PIL</span><b>↗</b></div></article><article class="project" data-project="tv"><div class="project-media"><div class="project-gallery four"><img src="assets/tv-home.png" alt="XYZ TV 首页"><img src="assets/tv-player.png" alt="XYZ TV 播放器"><img src="assets/tv-podcast-detail.png" alt="XYZ TV 播客详情"><img src="assets/tv-settings.png" alt="XYZ TV 设置页"></div></div><div class="project-type">产品体验</div><h3>XYZ TV</h3><p>面向 Android TV 的播客客户端，独立完成信息架构、大屏布局、遥控器交互和完整功能链路。</p><div class="project-foot"><span>Compose / MVVM / Go / ExoPlayer</span><b>↗</b></div></article></div>
+      </section>
+
+      <section class="contact" id="contact"><div class="contact-main"><div class="eyebrow" style="color:#9edac2">联系 / 下一步</div><h2>如果问题值得被解决，就从一次对话开始。</h2><p>希望参与 AI 工具搭建、数据流程优化、对话场景设计和模型质量反馈等工作。</p></div><div class="contact-links"><a class="contact-link" href="mailto:oshiki0214@outlook.com"><span>邮箱</span>oshiki0214@outlook.com <b>↗</b></a><a class="contact-link" href="tel:17726212582"><span>电话</span>177-2621-2582 <b>↗</b></a><a class="contact-link" href="王梓琦_个人简历.docx"><span>简历</span>下载个人简历 <b>↓</b></a></div></section>
+    </main>
   </div>
 
-  <div class="cap-block reveal">
-    <div class="cap-copy">
-      <h3><span class="idx">03</span>业余时间的独立开发</h3>
-      <p>工作之外也一直保持独立开发的习惯，做过播客类电视端 App、自媒体视频自动化产出工具等项目，从产品设计到开发实现都独立完成。</p>
-      <ul>
-        <li>播客电视端 App：首页、分类浏览、播放页、订阅列表等信息架构均为独立设计</li>
-        <li>后台支持可视化调整首页内容排布，改动后即时生效</li>
-      </ul>
-    </div>
-    <div class="cap-visual">
-      <span class="cap-tag">独立项目</span>
-      <div class="mini-gallery" style="padding:8px; background:#000;">
-        <img class="full" src="assets/tv-home.png" alt="TV 首页">
-        <img src="assets/tv-player.png" alt="TV 单集详情">
-        <img src="assets/tv-podcast-info.png" alt="TV 播客详情">
-      </div>
-    </div>
-  </div>
-</section>
+  <div class="modal" id="modal"><div class="modal-card"><div class="modal-head"><div><div class="section-kicker" id="modal-kicker">能力证据</div><h2 id="modal-title">资料详情</h2></div><button class="modal-close" id="modal-close">关闭</button></div><div class="modal-copy" id="modal-copy"></div></div></div>
 
-<section id="cap2">
-  <div class="sec-head reveal">
-    <div class="sec-num">CAPABILITY 02</div>
-    <div class="sec-title">懂内容场景，会设计对话</div>
-    <div class="sec-sub">两年内容运营经验，擅长将内容场景拆解为清晰的分类与标准。</div>
-  </div>
-  <div class="story reveal reveal-delay1">
-    <p>曾在网易云音乐负责内容运营两年，长期负责 <b>二次元、游戏音乐、日系、摇滚、粤语</b> 等垂类内容，参与过标签体系的搭建。此后从事多模态数据工作，也积累了对语音场景的实际判断经验，例如说话人的情绪、语气、环境声音与上下文是否连贯等。</p>
-    <p>结合这些积累，接下来希望重点投入的数据构造方向包括：</p>
-    <p>· <b>二次元与游戏相关的对话数据</b>——此类场景用户提问密度高、专有名词和梗较多、追问频繁，适合用于检验模型对垂类内容的理解深度与多轮对话的稳定性；</p>
-    <p>· <b>兴趣陪伴类场景</b>——结合以往「理解用户兴趣、组织内容供给」的经验，构造「用户表达兴趣、模型能够承接并延展话题」类的对话数据；</p>
-    <p>· <b>模型声音上的情绪表达</b>——关注模型在语音输出中能否恰当传递情绪与语气，比如安慰、调侃、惊喜等不同场景下声音的表现是否自然、是否贴合语境，这也是 Live 场景下影响用户体验的关键一环；</p>
-    <p>擅长将这类内容构造工作沉淀为 <span class="highlight">可复用的场景库与执行标准</span>，而不只是单次产出。</p>
-  </div>
-</section>
+  <script>
+    const reveal = new IntersectionObserver(entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('in')), { threshold:.12 });
+    document.querySelectorAll('.reveal').forEach(el => reveal.observe(el));
 
-<section id="future">
-  <div class="sec-head reveal">
-    <div class="sec-num">WHAT'S NEXT</div>
-    <div class="sec-title">未来希望重点参与的方向</div>
-    <div class="sec-sub">涵盖对话场景设计、AI 产出问题归因、语音难点处理三个方向。</div>
-  </div>
-  <div class="future-grid">
-    <div class="future-card reveal reveal-delay1">
-      <div class="fc-num">01</div>
-      <h4>对话场景体系建设</h4>
-      <p>重点是二次元、游戏、兴趣陪伴等常见对话场景的内容设计，以及把这些经验整理成可以反复用的模板和标准，而不是每次都从零开始写。</p>
-    </div>
-    <div class="future-card reveal reveal-delay2">
-      <div class="fc-num">02</div>
-      <h4>AI 产出问题的界定与归因</h4>
-      <p>专门看「AI 做得不好的地方」到底属于什么类型的问题，以及怎么把这些反馈整理成算法侧能直接用上的信息。</p>
-    </div>
-    <div class="future-card reveal reveal-delay3">
-      <div class="fc-num">03</div>
-      <h4>语音难点场景的处理与评测</h4>
-      <p>方言、口音、多语种、嘈杂环境这些常见的语音理解难点，正好是我做转录工具时积累下来的经验可以直接用上的地方。</p>
-    </div>
-  </div>
-</section>
+    document.querySelectorAll('.job-summary').forEach(button => button.addEventListener('click', () => {
+      const job = button.closest('.job');
+      job.classList.toggle('is-open');
+      button.setAttribute('aria-expanded', job.classList.contains('is-open'));
+    }));
 
-<script>
-  // scroll reveal
-  const revealEls = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){ e.target.classList.add('in'); }
-    });
-  }, { threshold: 0.15 });
-  revealEls.forEach(el=>io.observe(el));
+    const methodCopy = {
+      observe:'例：发现标注平台中反复翻找和人工比对很耗时，于是做出 LabelNav 的导航、Diff 和图片查看功能。',
+      structure:'例：把 ASR 工具拆成引擎层、录音层、调度层和输出层，让 6 个本地引擎可以被统一调用。',
+      build:'例：用 Python、本地模型、Chrome Extension、Flask 或 Compose，把方案做成可以被真实使用的工具。',
+      iterate:'例：把一次性经验沉淀成 Prompt、PRD、SOP、版本历史和可复用的执行标准。'
+    };
+    document.querySelectorAll('[data-method]').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('[data-method]').forEach(b => b.classList.toggle('is-active', b === button));
+      document.querySelector('#method-detail').textContent = methodCopy[button.dataset.method];
+    }));
 
-  // dot nav active state
-  const sections = ['hero','cap1','cap2','future'].map(id=>document.getElementById(id));
-  const dots = document.querySelectorAll('.dotnav a');
-  const dotIO = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        const idx = sections.indexOf(entry.target);
-        dots.forEach(d=>d.classList.remove('active'));
-        if(dots[idx]) dots[idx].classList.add('active');
-      }
-    });
-  }, { threshold: 0.5 });
-  sections.forEach(s=> s && dotIO.observe(s));
-
-  dots.forEach(d=>{
-    d.addEventListener('click', (e)=>{
-      e.preventDefault();
-      document.querySelector(d.getAttribute('href')).scrollIntoView({behavior:'smooth'});
-    });
-  });
-
-  // tilt glow follow for future cards
-  document.querySelectorAll('.future-card').forEach(card=>{
-    card.addEventListener('mousemove', (e)=>{
-      const r = card.getBoundingClientRect();
-      card.style.setProperty('--mx', (e.clientX-r.left)+'px');
-      card.style.setProperty('--my', (e.clientY-r.top)+'px');
-    });
-  });
-</script>
+    const evidence = {
+      asr:{ kicker:'提示词 / 本地 AI', title:'ASR 本地引擎转录工具箱', html:'<p>一套面向多语种、多方言和隐私敏感场景的离线语音识别工具集合。</p><h3>资料里记录的产品能力</h3><ul><li>6 个本地 ASR 引擎：Qwen3-ASR、Whisper、FunASR、UniASR、MMS 等。</li><li>覆盖 100+ 种语言和 30+ 种中国方言。</li><li>支持多模型对比、WASAPI 系统录音、TXT / JSON / SRT 输出。</li><li>包含模型缓存、设备自动选择、Windows 编码和子进程调度等工程细节。</li></ul><img class="modal-image" src="assets/shot-asr-tool.png" alt="ASR 工具界面">'},
+      label:{ kicker:'需求文档 / 浏览器插件', title:'LabelNav 标注辅助插件', html:'<p>为标注平台设计的效率工具，直接服务标注员、质检员和项目经理。</p><h3>核心交互</h3><ul><li>左侧导航快速跳转对话轮次和字段。</li><li>图片拖动、旋转、翻转、缩放，并记忆变换状态。</li><li>原文与修改内容并排 Diff，黄色标出新增和删除。</li><li>MutationObserver 监听任务变化，分页自动调整到 20 条。</li></ul><img class="modal-image" src="assets/shot-labelnav.png" alt="LabelNav 界面">'},
+      monitor:{ kicker:'工作流 / 业务自动化', title:'竞品监控机器人', html:'<p>把真实商品页面采集、原始活动文案、AI 解析、历史快照和监控仪表盘串成一个完整工作流。</p><h3>它具体做了什么</h3><ul><li>通过 Chrome 插件从真实商品页读取价格、优惠券、促销、赠品、店铺和规格。</li><li>后端保存按商品与日期区分的历史快照，再交给 AI 解析到手价、促销类型和置信度。</li><li>监控中心汇总监控品牌数、已抓取数量、降价变化、活动数量和 AI 结果，低置信度时保留原文供人工核对。</li></ul><img class="modal-image" src="assets/competitor-dashboard.png" alt="竞品监控机器人监控中心">'},
+      netease:{ kicker:'项目 / 媒体自动化', title:'NetEase Weekly Clipper', html:'<p>把歌单抓取、AI 乐评、视觉编辑、字幕和视频渲染串成自动化内容生产流程。</p><h3>工作链路</h3><ul><li>从每周歌单和曲目资料中整理可发布的内容结构。</li><li>用 AI 生成乐评与视觉提示，再统一进入视频渲染流程。</li><li>通过片头、专辑画面、字幕和音乐片段形成可复用的视频模板。</li></ul><div class="modal-gallery"><img src="assets/netease-intro.png" alt="NetEase Weekly Clipper 视频片头"><img src="assets/netease-album.png" alt="NetEase Weekly Clipper 曲目画面"><img src="assets/netease-render.png" alt="NetEase Weekly Clipper 视觉渲染画面"><img src="assets/netease-single.png" alt="NetEase Weekly Clipper 单曲视频画面"></div>'},
+      tv:{ kicker:'需求文档 / 产品系统', title:'XYZ TV 产品设计与交互规格', html:'<p>一个面向 Android TV 和电视盒子的播客客户端，从产品定位、用户痛点、信息架构到遥控器交互都有完整资料。</p><h3>系统证据</h3><ul><li>针对客厅场景、DPAD 焦点移动和大屏 Shelf 布局做设计。</li><li>覆盖登录、发现、搜索、订阅、播放器、评论、个人中心和设置。</li><li>PRD 记录 47 个业务端点、性能目标和错误处理策略。</li><li>技术栈包含 Jetpack Compose for TV、MVVM、Go 嵌入式后端和 ExoPlayer。</li></ul><div class="modal-gallery"><img src="assets/tv-home.png" alt="XYZ TV 首页"><img src="assets/tv-categories.png" alt="XYZ TV 分类页"><img src="assets/tv-search.png" alt="XYZ TV 搜索页"><img src="assets/tv-player.png" alt="XYZ TV 播放器"><img src="assets/tv-podcast-detail.png" alt="XYZ TV 播客详情"><img src="assets/tv-settings.png" alt="XYZ TV 设置页"></div>'},
+      ops:{ kicker:'流程规范 / 内容运营', title:'内容运营与流程沉淀', html:'<p>你过去的工作资料并不只有执行记录，还包括垂类专区更新、搜索词巡查、曲风巡查等流程文档。</p><h3>可以呈现的工作证据</h3><ul><li>把复杂内容拆成标签、分类、榜单、搜索和推荐位。</li><li>根据 UGC、竞品平台和内容表现整理选题方向。</li><li>将执行过程写成团队可复用的流程规范和说明文档。</li><li>在大规模处理内容的同时，保持口径一致和问题可追踪。</li></ul>'}
+    };
+    const modal = document.querySelector('#modal');
+    document.querySelectorAll('[data-evidence]').forEach(button => button.addEventListener('click', () => { const item=evidence[button.dataset.evidence]; document.querySelector('#modal-kicker').textContent=item.kicker; document.querySelector('#modal-title').textContent=item.title; document.querySelector('#modal-copy').innerHTML=item.html; modal.classList.add('is-open'); document.body.style.overflow='hidden'; }));
+    const projects = {
+      monitor:evidence.monitor,
+      asr:evidence.asr,
+      label:evidence.label,
+      netease:evidence.netease,
+      tv:evidence.tv
+    };
+    document.querySelectorAll('[data-project]').forEach(card => card.addEventListener('click', () => { const item=projects[card.dataset.project]; document.querySelector('#modal-kicker').textContent=item.kicker; document.querySelector('#modal-title').textContent=item.title; document.querySelector('#modal-copy').innerHTML=item.html; modal.classList.add('is-open'); document.body.style.overflow='hidden'; }));
+    function closeModal(){ modal.classList.remove('is-open'); document.body.style.overflow=''; }
+    document.querySelector('#modal-close').addEventListener('click', closeModal); modal.addEventListener('click', e => e.target === modal && closeModal()); document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
+  </script>
 </body>
 </html>
