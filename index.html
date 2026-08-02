@@ -111,7 +111,7 @@
     .project-grid.supporting { grid-template-columns:repeat(2, minmax(0, 1fr)); max-width:850px; }
     .project { min-height:345px; display:flex; flex-direction:column; padding:18px; border:1px solid var(--line); border-radius:18px; background:var(--paper); cursor:pointer; transition:.25s; overflow:hidden; position:relative; }
     .project:hover { transform:translateY(-5px); box-shadow:var(--shadow); }
-    .project-media { height:145px; margin:-18px -18px 17px; overflow:hidden; background:#15201b; }
+    .project-media { height:158px; margin:-18px -18px 17px; overflow:hidden; background:#15201b; }
     .project-media img { width:100%; height:100%; display:block; object-fit:cover; object-position:top left; transition:.35s; }
     .project:hover .project-media img { transform:scale(1.04); }
     .project:nth-child(2) .project-media { background:#eef1f7; }
@@ -125,6 +125,19 @@
     .project-gallery.four { grid-template-columns:1.25fr .75fr; grid-template-rows:repeat(2,minmax(0,1fr)); }
     .project-gallery.four img:first-child { grid-row:1 / 3; }
     .project-gallery img { width:100%; height:100%; min-width:0; object-fit:cover; object-position:center; }
+    .project-cover { height:100%; position:relative; overflow:hidden; isolation:isolate; }
+    .project-cover::after { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; }
+    .project-cover > img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .project-cover-copy { position:absolute; left:19px; top:19px; z-index:2; display:grid; gap:7px; color:#fff; }
+    .project-cover-copy span { color:rgba(255,255,255,.72); font-size:10px; }
+    .project-cover-copy strong { font-size:27px; line-height:.98; letter-spacing:-.08em; }
+    .project-cover-copy small { color:rgba(255,255,255,.72); font-size:10px; }
+    .netease-cover { background:#27223f; }
+    .netease-cover::after { background:linear-gradient(90deg,#27223f 0%,rgba(39,34,63,.94) 30%,rgba(39,34,63,.22) 100%),linear-gradient(0deg,rgba(18,15,31,.54),transparent 58%); }
+    .netease-cover > img { object-position:center 12%; opacity:.9; }
+    .tv-cover { background:#0c1116; }
+    .tv-cover::after { background:linear-gradient(90deg,rgba(8,12,16,.82) 0%,rgba(8,12,16,.35) 48%,transparent 78%),linear-gradient(0deg,rgba(8,12,16,.45),transparent 55%); }
+    .tv-cover > img { object-position:center top; filter:saturate(.88); }
     .project-type { color:var(--green); font-family:"DM Mono",monospace; font-size:9px; }
     .project h3 { margin:9px 0 7px; font-size:20px; letter-spacing:-.07em; }
     .project p { margin:0; color:var(--muted); font-size:11px; line-height:1.7; }
@@ -209,7 +222,7 @@
         <div class="project-group-label">核心项目 / 与目标岗位直接相关</div>
         <div class="project-grid"><article class="project" data-project="asr"><div class="project-media"><img src="assets/shot-asr-tool.png" alt="ASR 本地引擎工具界面"></div><div class="project-type">本地 AI 工具</div><h3>ASR 本地引擎工具箱</h3><p>面向多语种、多方言和隐私敏感场景的离线转录工具，支持多引擎对比和多种输出格式。</p><div class="project-foot"><span>Python / Qwen / Whisper / FunASR</span><b>↗</b></div></article><article class="project" data-project="label"><div class="project-media"><img src="assets/shot-labelnav.png" alt="LabelNav 标注辅助插件界面"></div><div class="project-type">工作流插件</div><h3>LabelNav 标注辅助插件</h3><p>针对标注、质检中的查找、图片查看和文本比对痛点，做成可复用的浏览器效率工具。</p><div class="project-foot"><span>浏览器插件 / 文本对比 / 交互</span><b>↗</b></div></article><article class="project" data-project="monitor"><div class="project-media"><img src="assets/competitor-dashboard.png" alt="竞品监控机器人监控中心"></div><div class="project-type">业务自动化</div><h3>竞品监控机器人</h3><p>从真实商品页面采集数据，经 AI 解析后在监控中心呈现价格、活动、赠品和置信度。</p><div class="project-foot"><span>Chrome / Flask / SQLite / AI</span><b>↗</b></div></article></div>
         <div class="project-group-label">辅助项目 / 展示跨场景产品能力</div>
-        <div class="project-grid supporting"><article class="project" data-project="netease"><div class="project-media"><div class="project-gallery four"><img src="assets/netease-intro.png" alt="NetEase Weekly Clipper 视频片头"><img src="assets/netease-album.png" alt="NetEase Weekly Clipper 曲目画面"><img src="assets/netease-render.png" alt="NetEase Weekly Clipper 视觉渲染画面"><img src="assets/netease-single.png" alt="NetEase Weekly Clipper 单曲视频画面"></div></div><div class="project-type">媒体自动化</div><h3>NetEase Weekly Clipper</h3><p>把歌单抓取、AI 乐评、视觉编辑、字幕和视频渲染串成自动化内容生产流程。</p><div class="project-foot"><span>Python / Gemini / MoviePy / PIL</span><b>↗</b></div></article><article class="project" data-project="tv"><div class="project-media"><div class="project-gallery four"><img src="assets/tv-home.png" alt="XYZ TV 首页"><img src="assets/tv-player.png" alt="XYZ TV 播放器"><img src="assets/tv-podcast-detail.png" alt="XYZ TV 播客详情"><img src="assets/tv-settings.png" alt="XYZ TV 设置页"></div></div><div class="project-type">产品体验</div><h3>XYZ TV</h3><p>面向 Android TV 的播客客户端，独立完成信息架构、大屏布局、遥控器交互和完整功能链路。</p><div class="project-foot"><span>Compose / MVVM / Go / ExoPlayer</span><b>↗</b></div></article></div>
+        <div class="project-grid supporting"><article class="project" data-project="netease"><div class="project-media"><div class="project-cover netease-cover"><img src="assets/netease-intro.png" alt="NetEase Weekly Clipper 歌单封面"><div class="project-cover-copy"><span>每周内容生产</span><strong>从歌单<br>到成片</strong><small>抓取 · 评审 · 字幕 · 渲染</small></div></div></div><div class="project-type">媒体自动化</div><h3>NetEase Weekly Clipper</h3><p>把歌单抓取、AI 乐评、视觉编辑、字幕和视频渲染串成自动化内容生产流程。</p><div class="project-foot"><span>Python / Gemini / MoviePy / PIL</span><b>↗</b></div></article><article class="project" data-project="tv"><div class="project-media"><div class="project-cover tv-cover"><img src="assets/tv-home.png" alt="XYZ TV 首页"><div class="project-cover-copy"><span>Android TV 播客客户端</span><strong>为大屏设计<br>完整听播体验</strong><small>首页 · 搜索 · 播放器 · 遥控器</small></div></div></div><div class="project-type">产品体验</div><h3>XYZ TV</h3><p>面向 Android TV 的播客客户端，独立完成信息架构、大屏布局、遥控器交互和完整功能链路。</p><div class="project-foot"><span>Compose / MVVM / Go / ExoPlayer</span><b>↗</b></div></article></div>
       </section>
 
       <section class="contact" id="contact"><div class="contact-main"><div class="eyebrow" style="color:#9edac2">联系 / 下一步</div><h2>如果问题值得被解决，就从一次对话开始。</h2><p>希望参与 AI 工具搭建、数据流程优化、对话场景设计和模型质量反馈等工作。</p></div><div class="contact-links"><a class="contact-link" href="mailto:oshiki0214@outlook.com"><span>邮箱</span>oshiki0214@outlook.com <b>↗</b></a><a class="contact-link" href="tel:17726212582"><span>电话</span>177-2621-2582 <b>↗</b></a><a class="contact-link" href="王梓琦_个人简历.docx"><span>简历</span>下载个人简历 <b>↓</b></a></div></section>
